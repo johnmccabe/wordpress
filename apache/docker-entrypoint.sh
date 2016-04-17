@@ -141,6 +141,8 @@ EOPHP
 		set_config 'WP_DEBUG' 1 boolean
 	fi
 
+	echo "WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}, WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}, WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}, WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}"
+
 	TERM=dumb php -- "$WORDPRESS_DB_HOST" "$WORDPRESS_DB_USER" "$WORDPRESS_DB_PASSWORD" "$WORDPRESS_DB_NAME" <<'EOPHP'
 <?php
 // database might not exist, so let's try creating it (just to be safe)
@@ -149,7 +151,9 @@ $stderr = fopen('php://stderr', 'w');
 
 list($host, $port) = explode(':', $argv[1], 2);
 
-$maxTries = 10;
+fwrite($stderr, "\n" . 'MySQL host: ' . $host . ' MySQL port: ' . $port . ' Arg2: ' . $argv[2] . ' Arg3: ' .  $argv[3] . "\n");
+
+$maxTries = 100;
 do {
 	$mysql = new mysqli($host, $argv[2], $argv[3], '', (int)$port);
 	if ($mysql->connect_error) {
